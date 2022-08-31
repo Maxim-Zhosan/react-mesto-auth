@@ -9,26 +9,27 @@ import ImagePopup from './ImagePopup';
 function App() {
 
   const [isEditAvatarPopupOpen, setIsEditAvatarPopupOpen] = React.useState(false);
+  const [isAddPlacePopupOpen, setIsAddPlacePopupOpen] = React.useState(false);
+  const [isEditProfilePopupOpen, setIsEditProfilePopupOpen] = React.useState(false);
+  const [isDeleteCardPopupOpen, setIsDeleteCardPopupOpen] = React.useState(false);
+  const [selectedCard, setCardPopupOpen] = React.useState({});
+
   function handleEditAvatarClick() {
     setIsEditAvatarPopupOpen(true);
   };
 
-  const [isAddPlacePopupOpen, setIsAddPlacePopupOpen] = React.useState(false);
   function handleAddPlaceClick() {
     setIsAddPlacePopupOpen(true);
   };
 
-  const [isEditProfilePopupOpen, setIsEditProfilePopupOpen] = React.useState(false);
   function handleEditProfileClick() {
     setIsEditProfilePopupOpen(true);
   };
 
-  const [isDeleteCardPopupOpen, setIsDeleteCardPopupOpen] = React.useState(false);
   function handleDeleteCardClick() {
     setIsDeleteCardPopupOpen(true);
   };
 
-  const [selectedCard, setCardPopupOpen] = React.useState({});
   function handleCardClick(card) {
     setCardPopupOpen(card);
   };
@@ -43,23 +44,23 @@ function App() {
 
   return (
     <div className="page">
-    <Header />
-    <Main 
-    onEditProfile={handleEditProfileClick} 
-    onAddPlace={handleAddPlaceClick} 
-    onEditAvatar={handleEditAvatarClick} 
-    onDeleteCard={handleDeleteCardClick}
-    onCardClick={handleCardClick}
-    />
-    <Footer />
+      <Header />
+      <Main
+        onEditProfile={handleEditProfileClick}
+        onAddPlace={handleAddPlaceClick}
+        onEditAvatar={handleEditAvatarClick}
+        onDeleteCard={handleDeleteCardClick}
+        onCardClick={handleCardClick}
+      />
+      <Footer />
 
-    <PopupWithForm name="avatar" title="Обновить аватар" isOpen={isEditAvatarPopupOpen} onClose={closeAllPopups}>
+      <PopupWithForm name="avatar" title="Обновить аватар" isOpen={isEditAvatarPopupOpen} onClose={closeAllPopups} buttonText='Изменить'>
         <input type="url" id="popup__input_type_avatar-link" className="popup__input popup__input_type_avatar-link" name="avatar"
           placeholder="Ссылка на новый аватар" required />
         <span id="popup__input_type_avatar-link-error" className="popup__error"></span>
       </PopupWithForm>
 
-      <PopupWithForm name="place" title="Новое место" isOpen={isAddPlacePopupOpen} onClose={closeAllPopups}>
+      <PopupWithForm name="place" title="Новое место" isOpen={isAddPlacePopupOpen} onClose={closeAllPopups} buttonText='Добавить'>
         <input type="text" id="popup__input_type_place" className="popup__input popup__input_type_place" name="name"
           placeholder="Название" required minLength="2" maxLength="30" />
         <span id="popup__input_type_place-error" className="popup__error"></span>
@@ -68,7 +69,7 @@ function App() {
         <span id="popup__input_type_link-error" className="popup__error"></span>
       </PopupWithForm>
 
-      <PopupWithForm name="profile" title="Редактировать профиль" isOpen={isEditProfilePopupOpen} onClose={closeAllPopups}>
+      <PopupWithForm name="profile" title="Редактировать профиль" isOpen={isEditProfilePopupOpen} onClose={closeAllPopups} buttonText='Сохранить'>
         <input type="text" id="popup__input_type_name" className="popup__input popup__input_type_name" name="name"
           placeholder="Имя" required minLength="2" maxLength="40" />
         <span id="popup__input_type_name-error" className="popup__error"></span>
@@ -77,7 +78,7 @@ function App() {
         <span id="popup__input_type_job-error" className="popup__error"></span>
       </PopupWithForm>
 
-      <PopupWithForm name="delete-card" title="Вы уверены?" isOpen={isDeleteCardPopupOpen} onClose={closeAllPopups}>
+      <PopupWithForm name="delete-card" title="Вы уверены?" isOpen={isDeleteCardPopupOpen} onClose={closeAllPopups} buttonText=''>
         <button type="button" className="popup__button" aria-label="Подтвердить удаление">Да</button>
         <button className="popup__close-icon" type="button" aria-label="Закрыть"></button>
       </PopupWithForm>
@@ -86,7 +87,7 @@ function App() {
 
       </ImagePopup>
 
-  </div>
+    </div>
   );
 }
 
