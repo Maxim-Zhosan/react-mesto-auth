@@ -1,23 +1,38 @@
 import React from 'react';
 import '../index.css';
 import api from '../utils/api';
+import Card from './Card';
 
 function Main(props) {
 
   const [userName, setUserName] = React.useState('');
   const [userDescription, setUserDescription] = React.useState('');
   const [userAvatar, setUserAvatar] = React.useState('');
+  const [cards, loadCards] = React.useState([]);
 
   React.useEffect(() => {
     api.getUserInformation()
-    .then(res => {
-      console.log(res);
-      setUserName(res.name);
-      setUserDescription(res.about);
-      setUserAvatar(res.avatar);
-    })
-    .catch ((err) => console.log(err))
-  })
+      .then(res => {
+        setUserName(res.name);
+        setUserDescription(res.about);
+        setUserAvatar(res.avatar);
+      })
+      .catch((err) => console.log(err))
+  }, [])
+
+  React.useEffect(() => {
+    api.getInitialCards()
+      .then(res => {
+        loadCards(res.map(item => ({
+          _id: item._id,
+          name: item.name,
+          link: item.link,
+          likes: item.likes
+        })));
+      })
+      .catch((err) => console.log(err))
+  }, [])
+
 
   return (
 
@@ -34,9 +49,12 @@ function Main(props) {
       </section>
 
       <section className="elements">
+        {cards.map((card) => (
+          <Card name={card.name} link={card.link} likes={card.likes.length} key={card._id} onCardClick={props.onCardClick}/>
+        ))}
       </section>
 
-    </main>
+    </main >
   )
 }
 

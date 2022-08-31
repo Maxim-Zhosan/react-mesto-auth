@@ -4,6 +4,7 @@ import Main from './Main';
 import Footer from './Footer';
 import PopupWithForm from './PopupWithForm';
 import React from 'react';
+import ImagePopup from './ImagePopup';
 
 function App() {
 
@@ -27,11 +28,17 @@ function App() {
     setIsDeleteCardPopupOpen(true);
   };
 
+  const [selectedCard, setCardPopupOpen] = React.useState({});
+  function handleCardClick(card) {
+    setCardPopupOpen(card);
+  };
+
   function closeAllPopups() {
     setIsEditAvatarPopupOpen(false);
     setIsAddPlacePopupOpen(false);
     setIsEditProfilePopupOpen(false);
     setIsDeleteCardPopupOpen(false);
+    setCardPopupOpen({});
   }
 
   return (
@@ -42,6 +49,7 @@ function App() {
     onAddPlace={handleAddPlaceClick} 
     onEditAvatar={handleEditAvatarClick} 
     onDeleteCard={handleDeleteCardClick}
+    onCardClick={handleCardClick}
     />
     <Footer />
 
@@ -73,6 +81,10 @@ function App() {
         <button type="button" className="popup__button" aria-label="Подтвердить удаление">Да</button>
         <button className="popup__close-icon" type="button" aria-label="Закрыть"></button>
       </PopupWithForm>
+
+      <ImagePopup card={selectedCard} onClose={closeAllPopups} >
+
+      </ImagePopup>
 
   </div>
   );
