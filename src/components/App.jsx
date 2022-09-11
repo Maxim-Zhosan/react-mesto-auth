@@ -7,6 +7,7 @@ import React from 'react';
 import ImagePopup from './ImagePopup';
 import EditProfilePopup from './EditProfilePopup';
 import EditAvatarPopup from './EditAvatarPopup';
+import AddPlacePopup from './AddPlacePopup';
 import { CurrentUserContext } from '../contexts/CurrentUserContext';
 import { CardsContext } from '../contexts/CardsContext';
 import api from '../utils/api';
@@ -82,6 +83,31 @@ function App() {
       .catch((err) => console.log(err))
   };
 
+  function handleAddPlaceSubmit(data) {
+    api.addNewCard(data)
+      .then(newCard => {
+        loadCards([newCard, ...cards]);
+      })
+      .then(closeAllPopups())
+      .catch((err) => console.log(err))
+  };
+
+  function handleCardLike(card) {
+    const isLiked = card.likes.some(i => i._id === currentUser._id);
+    api.changeLikeCardStatus(card._id, !isLiked)
+      .then((newCard) => {
+        loadCards((state) => state.map((c) => c._id === card._id ? newCard : c));
+      })
+      .catch((err) => console.log(err));
+  };
+
+  function handleCardDelete(card) {
+    api.deleteCardFromServer(card._id)
+      .then(loadCards((state) => state.filter((c) => c._id !== card._id)))
+      .catch((err) => console.log(err));
+  };
+
+
   function closeAllPopups() {
     setIsEditAvatarPopupOpen(false);
     setIsAddPlacePopupOpen(false);
@@ -92,42 +118,36 @@ function App() {
 
   return (
     <CurrentUserContext.Provider value={currentUser}>
-    <CardsContext.Provider value={cards}>
-    <div className="page">
-      <Header />
-      <Main
-        onEditProfile={handleEditProfileClick}
-        onAddPlace={handleAddPlaceClick}
-        onEditAvatar={handleEditAvatarClick}
-        onDeleteCard={handleDeleteCardClick}
-        onCardClick={handleCardClick}
-        setCards={loadCards}
-      />
-      <Footer />
+      <CardsContext.Provider value={cards}>
+        <div className="page">
+          <Header />
+          <Main
+            onEditProfile={handleEditProfileClick}
+            onAddPlace={handleAddPlaceClick}
+            onEditAvatar={handleEditAvatarClick}
+            onDeleteCard={handleDeleteCardClick}
+            onCardClick={handleCardClick}
+            cards={cards}
+            onCardLike={handleCardLike}
+            onCardDelete={handleCardDelete}
+          />
+          <Footer />
 
-      <PopupWithForm name="place" title="Новое место" isOpen={isAddPlacePopupOpen} onClose={closeAllPopups} buttonText='Добавить'>
-        <input type="text" id="popup__input_type_place" className="popup__input popup__input_type_place" name="name"
-          placeholder="Название" required minLength="2" maxLength="30" />
-        <span id="popup__input_type_place-error" className="popup__error"></span>
-        <input type="url" id="popup__input_type_link" className="popup__input popup__input_type_link" name="link"
-          placeholder="Ссылка на картинку" required />
-        <span id="popup__input_type_link-error" className="popup__error"></span>
-      </PopupWithForm>
+          <EditProfilePopup isOpen={isEditProfilePopupOpen} onClose={closeAllPopups} onUpdateUser={handleUpdateUser} />
+          <EditAvatarPopup isOpen={isEditAvatarPopupOpen} onClose={closeAllPopups} onUpdateAvatar={handleUpdateAvatar} />
+          <AddPlacePopup isOpen={isAddPlacePopupOpen} onClose={closeAllPopups} onAddPlace={handleAddPlaceSubmit} />
 
-      <EditProfilePopup isOpen={isEditProfilePopupOpen} onClose={closeAllPopups} onUpdateUser={handleUpdateUser} /> 
-      <EditAvatarPopup isOpen={isEditAvatarPopupOpen} onClose={closeAllPopups} onUpdateAvatar={handleUpdateAvatar} /> 
+          <PopupWithForm name="delete-card" title="Вы уверены?" isOpen={isDeleteCardPopupOpen} onClose={closeAllPopups} buttonText=''>
+            <button type="button" className="popup__button" aria-label="Подтвердить удаление">Да</button>
+            <button className="popup__close-icon" type="button" aria-label="Закрыть"></button>
+          </PopupWithForm>
 
-      <PopupWithForm name="delete-card" title="Вы уверены?" isOpen={isDeleteCardPopupOpen} onClose={closeAllPopups} buttonText=''>
-        <button type="button" className="popup__button" aria-label="Подтвердить удаление">Да</button>
-        <button className="popup__close-icon" type="button" aria-label="Закрыть"></button>
-      </PopupWithForm>
+          <ImagePopup card={selectedCard} onClose={closeAllPopups} >
 
-      <ImagePopup card={selectedCard} onClose={closeAllPopups} >
+          </ImagePopup>
 
-      </ImagePopup>
-
-    </div>
-    </CardsContext.Provider>
+        </div>
+      </CardsContext.Provider>
     </CurrentUserContext.Provider>
   );
 }
