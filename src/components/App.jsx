@@ -26,12 +26,7 @@ function App() {
     api.getUserInformation()
       .then(res => {
         setCurrentUser(res);
-        console.log(res);
-      })
-      .catch((err) => console.log(err))
-  }, [])
-
-  React.useEffect(() => {
+      });
     api.getInitialCards()
       .then(res => {
         loadCards(res.map(item => ({
@@ -127,7 +122,6 @@ function App() {
             onEditAvatar={handleEditAvatarClick}
             onDeleteCard={handleDeleteCardClick}
             onCardClick={handleCardClick}
-            cards={cards}
             onCardLike={handleCardLike}
             onCardDelete={handleCardDelete}
           />
