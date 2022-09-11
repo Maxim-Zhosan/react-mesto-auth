@@ -83,25 +83,15 @@ class Api {
             .then(res => this._getJsonOrError(res))
     }
 
-    addLike(id) {
+    changeLikeCardStatus(id, isLiked) {
         return fetch(`https://mesto.nomoreparties.co/v1/cohort-47/cards/${id}/likes`, {
-            method: 'PUT',
+            method: isLiked ? 'PUT': 'DELETE',
             headers: {
                 authorization: this._token
             }
-        })
-            .then(res => this._getJsonOrError(res))
-    }
-
-    deleteLike(id) {
-        return fetch(`https://mesto.nomoreparties.co/v1/cohort-47/cards/${id}/likes`, {
-            method: 'DELETE',
-            headers: {
-                authorization: this._token
-            }
-        })
-            .then(res => this._getJsonOrError(res))
-    }
+          })
+          .then(res => this._getJsonOrError(res))
+        }
 };
 
 const api = new Api('https://nomoreparties.co/v1/cohort-47', '9157fd6e-3722-41c9-95ed-7f23b70d5928')

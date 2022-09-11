@@ -30,11 +30,13 @@ function App() {
   React.useEffect(() => {
     api.getInitialCards()
       .then(res => {
+        console.log(res)
         loadCards(res.map(item => ({
           _id: item._id,
           name: item.name,
           link: item.link,
-          likes: item.likes
+          likes: item.likes,
+          owner: item.owner
         })));
       })
       .catch((err) => console.log(err))
@@ -79,6 +81,7 @@ function App() {
         onEditAvatar={handleEditAvatarClick}
         onDeleteCard={handleDeleteCardClick}
         onCardClick={handleCardClick}
+        setCards={loadCards}
       />
       <Footer />
 
