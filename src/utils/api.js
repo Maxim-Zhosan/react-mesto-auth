@@ -20,7 +20,7 @@ class Api {
             .then(res => this._getJsonOrError(res))
     }
 
-    changeUserInformation(data) {
+    setUserInfo(data) {
         return fetch(`${this._host}/users/me`, {
             method: 'PATCH',
             headers: {

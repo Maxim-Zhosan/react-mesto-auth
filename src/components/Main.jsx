@@ -12,7 +12,6 @@ function Main(props) {
   const setCards = props.setCards;
 
   function handleCardLike(card) {
-    console.log(card)
     const isLiked = card.likes.some(i => i._id === userInfo._id);
     api.changeLikeCardStatus(card._id, !isLiked)
       .then((newCard) => {
@@ -25,7 +24,7 @@ function Main(props) {
     api.deleteCardFromServer(card._id)
       .then(setCards((state) => state.filter((c) => c._id !== card._id)))
       .catch((err) => console.log(err));
-  }
+  };
 
   return (
 

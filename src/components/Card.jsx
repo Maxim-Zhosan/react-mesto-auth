@@ -1,7 +1,7 @@
 import React from 'react';
 import '../index.css';
 
-function Card({ name, likes, key, link, onCardClick, cardOwner, currentUser, onCardLike, card, onCardDelete }) {
+function Card({ name, likes, link, onCardClick, cardOwner, currentUser, onCardLike, card, onCardDelete }) {
 
   function handleClick() {
     onCardClick({ name, link })
@@ -14,13 +14,12 @@ function Card({ name, likes, key, link, onCardClick, cardOwner, currentUser, onC
   }
 
   const isOwn = cardOwner._id === currentUser;
-  console.log(card)
   const cardDeleteButtonClassName = (`elements__delete-icon ${isOwn ? "elements__delete-icon_visible" : "elements__delete-icon_hidden"}`);
   const isLiked = likes.some(i => i._id === currentUser);
   const cardLikeButtonClassName = (`elements__heart-icon ${isLiked && "elements__heart-icon_liked"}`); 
 
   return (
-    <article className="elements__item" key={key}>
+    <article className="elements__item">
       <img src={link} alt={name} className="elements__image" onClick={handleClick} />
       <div className="elements__place-name-box">
         <h2 className="elements__place-name">{name}</h2>

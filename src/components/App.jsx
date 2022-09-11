@@ -5,6 +5,7 @@ import Footer from './Footer';
 import PopupWithForm from './PopupWithForm';
 import React from 'react';
 import ImagePopup from './ImagePopup';
+import EditProfilePopup from './EditProfilePopup';
 import { CurrentUserContext } from '../contexts/CurrentUserContext';
 import { CardsContext } from '../contexts/CardsContext';
 import api from '../utils/api';
@@ -23,6 +24,7 @@ function App() {
     api.getUserInformation()
       .then(res => {
         setCurrentUser(res);
+        console.log(res);
       })
       .catch((err) => console.log(err))
   }, [])
@@ -30,7 +32,6 @@ function App() {
   React.useEffect(() => {
     api.getInitialCards()
       .then(res => {
-        console.log(res)
         loadCards(res.map(item => ({
           _id: item._id,
           name: item.name,
@@ -60,6 +61,15 @@ function App() {
 
   function handleCardClick(card) {
     setCardPopupOpen(card);
+  };
+
+  function handleUpdateUser(data) {
+    api.setUserInfo(data)
+      .then(res => {
+        setCurrentUser(res);
+      })
+      .then(closeAllPopups())
+      .catch((err) => console.log(err))
   };
 
   function closeAllPopups() {
@@ -100,14 +110,7 @@ function App() {
         <span id="popup__input_type_link-error" className="popup__error"></span>
       </PopupWithForm>
 
-      <PopupWithForm name="profile" title="Редактировать профиль" isOpen={isEditProfilePopupOpen} onClose={closeAllPopups} buttonText='Сохранить'>
-        <input type="text" id="popup__input_type_name" className="popup__input popup__input_type_name" name="name"
-          placeholder="Имя" required minLength="2" maxLength="40" />
-        <span id="popup__input_type_name-error" className="popup__error"></span>
-        <input type="text" id="popup__input_type_job" className="popup__input popup__input_type_job" name="about"
-          placeholder="Призвание" required minLength="2" maxLength="200" />
-        <span id="popup__input_type_job-error" className="popup__error"></span>
-      </PopupWithForm>
+      <EditProfilePopup isOpen={isEditProfilePopupOpen} onClose={closeAllPopups} onUpdateUser={handleUpdateUser} /> 
 
       <PopupWithForm name="delete-card" title="Вы уверены?" isOpen={isDeleteCardPopupOpen} onClose={closeAllPopups} buttonText=''>
         <button type="button" className="popup__button" aria-label="Подтвердить удаление">Да</button>
