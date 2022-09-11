@@ -6,6 +6,7 @@ import PopupWithForm from './PopupWithForm';
 import React from 'react';
 import ImagePopup from './ImagePopup';
 import EditProfilePopup from './EditProfilePopup';
+import EditAvatarPopup from './EditAvatarPopup';
 import { CurrentUserContext } from '../contexts/CurrentUserContext';
 import { CardsContext } from '../contexts/CardsContext';
 import api from '../utils/api';
@@ -72,6 +73,15 @@ function App() {
       .catch((err) => console.log(err))
   };
 
+  function handleUpdateAvatar(data) {
+    api.setUserAvatar(data)
+      .then(res => {
+        setCurrentUser(res);
+      })
+      .then(closeAllPopups())
+      .catch((err) => console.log(err))
+  };
+
   function closeAllPopups() {
     setIsEditAvatarPopupOpen(false);
     setIsAddPlacePopupOpen(false);
@@ -95,12 +105,6 @@ function App() {
       />
       <Footer />
 
-      <PopupWithForm name="avatar" title="Обновить аватар" isOpen={isEditAvatarPopupOpen} onClose={closeAllPopups} buttonText='Изменить'>
-        <input type="url" id="popup__input_type_avatar-link" className="popup__input popup__input_type_avatar-link" name="avatar"
-          placeholder="Ссылка на новый аватар" required />
-        <span id="popup__input_type_avatar-link-error" className="popup__error"></span>
-      </PopupWithForm>
-
       <PopupWithForm name="place" title="Новое место" isOpen={isAddPlacePopupOpen} onClose={closeAllPopups} buttonText='Добавить'>
         <input type="text" id="popup__input_type_place" className="popup__input popup__input_type_place" name="name"
           placeholder="Название" required minLength="2" maxLength="30" />
@@ -111,6 +115,7 @@ function App() {
       </PopupWithForm>
 
       <EditProfilePopup isOpen={isEditProfilePopupOpen} onClose={closeAllPopups} onUpdateUser={handleUpdateUser} /> 
+      <EditAvatarPopup isOpen={isEditAvatarPopupOpen} onClose={closeAllPopups} onUpdateAvatar={handleUpdateAvatar} /> 
 
       <PopupWithForm name="delete-card" title="Вы уверены?" isOpen={isDeleteCardPopupOpen} onClose={closeAllPopups} buttonText=''>
         <button type="button" className="popup__button" aria-label="Подтвердить удаление">Да</button>
