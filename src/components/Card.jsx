@@ -1,7 +1,6 @@
 import React from 'react';
-import '../index.css';
 
-function Card({ name, likes, link, onCardClick, cardOwner, currentUser, onCardLike, card, onCardDelete }) {
+function Card({ name, likes, link, onCardClick, cardOwner, currentUser, onCardLike, card, onDeleteCard }) {
 
   function handleClick() {
     onCardClick({ name, link })
@@ -10,7 +9,7 @@ function Card({ name, likes, link, onCardClick, cardOwner, currentUser, onCardLi
     onCardLike(card)
   }
   function handleDeleteClick() {
-    onCardDelete(card)
+    onDeleteCard(card)
   }
 
   const isOwn = cardOwner._id === currentUser;

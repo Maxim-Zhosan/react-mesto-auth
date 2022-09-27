@@ -1,13 +1,17 @@
-import '../index.css';
 import Header from './Header';
 import Main from './Main';
 import Footer from './Footer';
-import PopupWithForm from './PopupWithForm';
 import React from 'react';
+import { Route, Switch } from 'react-router-dom';
 import ImagePopup from './ImagePopup';
 import EditProfilePopup from './EditProfilePopup';
 import EditAvatarPopup from './EditAvatarPopup';
 import AddPlacePopup from './AddPlacePopup';
+import DeleteCardPopup from './DeleteCardPopup';
+import InfoTooltip from './InfoTooltip';
+import Login from './Login';
+import Register from './Register';
+import ProtectedRoute from './ProtectedRoute';
 import { CurrentUserContext } from '../contexts/CurrentUserContext';
 import { CardsContext } from '../contexts/CardsContext';
 import api from '../utils/api';
@@ -18,8 +22,13 @@ function App() {
   const [isAddPlacePopupOpen, setIsAddPlacePopupOpen] = React.useState(false);
   const [isEditProfilePopupOpen, setIsEditProfilePopupOpen] = React.useState(false);
   const [isDeleteCardPopupOpen, setIsDeleteCardPopupOpen] = React.useState(false);
+  const [isInfoTooltipPopupOpen, setIsInfoTooltipPopupOpen] = React.useState(true);
+  const [isLoggedIn, setIsLoggedIn] = React.useState(false);
   const [selectedCard, setCardPopupOpen] = React.useState({});
+  const [regStatus, setRegStatus] = React.useState("");
+  const [deletedCard, setDeletedCard] = React.useState({});
   const [currentUser, setCurrentUser] = React.useState({});
+  const [headerLink, setHeaderLink] = React.useState({name: "", link: "/"});
   const [cards, loadCards] = React.useState([]);
 
   React.useEffect(() => {
@@ -52,9 +61,14 @@ function App() {
     setIsEditProfilePopupOpen(true);
   };
 
-  function handleDeleteCardClick() {
+  function handleDeleteCardClick(card) {
     setIsDeleteCardPopupOpen(true);
+    setDeletedCard(card);
   };
+
+  function handleInfoTooltipActivation() {
+    setIsInfoTooltipPopupOpen(true);
+  }
 
   function handleCardClick(card) {
     setCardPopupOpen(card);
@@ -67,6 +81,10 @@ function App() {
       })
       .then(closeAllPopups())
       .catch((err) => console.log(err))
+  };
+
+  function handleHeaderLink(data) {
+    setHeaderLink(data)
   };
 
   function handleUpdateAvatar(data) {
@@ -102,47 +120,70 @@ function App() {
       .catch((err) => console.log(err));
   };
 
+  function handleRegisterUser(data) {
+    api.registerNewUser(data)
+      .then(res => {
+        setRegStatus(res);
+      })
+      .then(handleInfoTooltipActivation)
+      .catch((err) => console.log(err))
+  };
+
 
   function closeAllPopups() {
     setIsEditAvatarPopupOpen(false);
     setIsAddPlacePopupOpen(false);
     setIsEditProfilePopupOpen(false);
     setIsDeleteCardPopupOpen(false);
+    setIsInfoTooltipPopupOpen(false);
     setCardPopupOpen({});
+    setDeletedCard({});
+    setRegStatus("");
   }
 
   return (
-    <CurrentUserContext.Provider value={currentUser}>
-      <CardsContext.Provider value={cards}>
-        <div className="page">
-          <Header />
-          <Main
-            onEditProfile={handleEditProfileClick}
-            onAddPlace={handleAddPlaceClick}
-            onEditAvatar={handleEditAvatarClick}
-            onDeleteCard={handleDeleteCardClick}
-            onCardClick={handleCardClick}
-            onCardLike={handleCardLike}
-            onCardDelete={handleCardDelete}
-          />
-          <Footer />
+      <CurrentUserContext.Provider value={currentUser}>
+        <CardsContext.Provider value={cards}>
+          <div className="page">
+            <Header headerLink={headerLink} />
+            <Switch>
 
-          <EditProfilePopup isOpen={isEditProfilePopupOpen} onClose={closeAllPopups} onUpdateUser={handleUpdateUser} />
-          <EditAvatarPopup isOpen={isEditAvatarPopupOpen} onClose={closeAllPopups} onUpdateAvatar={handleUpdateAvatar} />
-          <AddPlacePopup isOpen={isAddPlacePopupOpen} onClose={closeAllPopups} onAddPlace={handleAddPlaceSubmit} />
+              <Route exact path="/sign-up">
+                <Register setHeaderLink={handleHeaderLink} onRegisterUser={handleRegisterUser}/>
+                <InfoTooltip isOpen={isInfoTooltipPopupOpen} onClose={closeAllPopups} isSuccess={regStatus} titleSuccess={'Вы успешно зарегистрировались!'} titleError={'Что-то пошло не так! Попробуйте ещё раз.'} />
+              </Route>
 
-          <PopupWithForm name="delete-card" title="Вы уверены?" isOpen={isDeleteCardPopupOpen} onClose={closeAllPopups} buttonText=''>
-            <button type="button" className="popup__button" aria-label="Подтвердить удаление">Да</button>
-            <button className="popup__close-icon" type="button" aria-label="Закрыть"></button>
-          </PopupWithForm>
+              <Route path="/sign-in">
+                <Login setHeaderLink={handleHeaderLink}/>
+              </Route>
 
-          <ImagePopup card={selectedCard} onClose={closeAllPopups} >
+              <ProtectedRoute exact path="/" isLoggedIn={isLoggedIn} >
+                <Main
+                  onEditProfile={handleEditProfileClick}
+                  onAddPlace={handleAddPlaceClick}
+                  onEditAvatar={handleEditAvatarClick}
+                  onDeleteCard={handleDeleteCardClick}
+                  onCardClick={handleCardClick}
+                  onCardLike={handleCardLike}
+                  setHeaderLink={handleHeaderLink}
+                />
+                <Footer />
 
-          </ImagePopup>
+                <EditProfilePopup isOpen={isEditProfilePopupOpen} onClose={closeAllPopups} onUpdateUser={handleUpdateUser} />
+                <EditAvatarPopup isOpen={isEditAvatarPopupOpen} onClose={closeAllPopups} onUpdateAvatar={handleUpdateAvatar} />
+                <AddPlacePopup isOpen={isAddPlacePopupOpen} onClose={closeAllPopups} onAddPlace={handleAddPlaceSubmit} />
+                <DeleteCardPopup isOpen={isDeleteCardPopupOpen} onClose={closeAllPopups} onDeleteCard={handleCardDelete} card={deletedCard}/>
+                <ImagePopup card={selectedCard} onClose={closeAllPopups} />
+              </ProtectedRoute>
 
-        </div>
-      </CardsContext.Provider>
-    </CurrentUserContext.Provider>
+              <Route path="/">
+                <Login setHeaderLink={handleHeaderLink}/>
+              </Route>
+
+            </Switch>
+          </div>
+        </CardsContext.Provider>
+      </CurrentUserContext.Provider>
   );
 }
 
