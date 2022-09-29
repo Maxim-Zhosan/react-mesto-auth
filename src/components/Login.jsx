@@ -1,9 +1,8 @@
 import React from 'react';
-import { withRouter } from 'react-router-dom';
 
 function Login(props) {
-  const { setHeaderLink } = props;
-  const [username, setUsername] = React.useState('');
+  const { setHeaderLink, onLogin } = props;
+  const [email, setEmail] = React.useState('');
   const [password, setPassword] = React.useState('');
 
   React.useEffect(() => {
@@ -13,10 +12,8 @@ function Login(props) {
     });
   }, [])
 
-
-
-  function handleChangeUsername(e) {
-    setUsername(e.target.value);
+  function handleChangeEmail(e) {
+    setEmail(e.target.value);
   }
 
   function handleChangePassword(e) {
@@ -24,11 +21,19 @@ function Login(props) {
   }
 
   function handleSubmit(e) {
-      e.preventDefault();
-      // onLoginUser({
-      //     name: name,
-      //     about: description
-      // });
+    e.preventDefault();
+    if (!email || !password) {
+      return;
+    }
+    onLogin({
+      password: password,
+      email: email
+    })
+      .then(() => {
+        setEmail('');
+        setPassword('');
+      }
+      )
   }
 
   return (
@@ -37,12 +42,12 @@ function Login(props) {
         Вход
       </p>
       <form onSubmit={handleSubmit} className="login__form">
-        <input required className="login__input" type="text" value={username} onChange={handleChangeUsername} placeholder="Email"/>
-        <input required className="login__input" type="password" value={password} onChange={handleChangePassword} placeholder="Пароль"/>
+        <input required className="login__input" type="text" value={email} onChange={handleChangeEmail} placeholder="Email" />
+        <input required className="login__input" type="password" value={password} onChange={handleChangePassword} placeholder="Пароль" />
         <button type="submit" className="login__button">Войти</button>
       </form>
     </div>
   )
 }
 
-export default withRouter(Login);
+export default Login;

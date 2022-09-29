@@ -1,21 +1,20 @@
 import React from 'react';
-import { withRouter, Link } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 
 function Register(props) {
-  const { setHeaderLink, onRegisterUser } = props;
-  const [username, setUsername] = React.useState('');
+  const { setHeaderLink, onRegister } = props;
+  const [email, setEmail] = React.useState('');
   const [password, setPassword] = React.useState('');
 
-React.useEffect(() => {
+  React.useEffect(() => {
     setHeaderLink({
       name: "Вход",
       link: "/sign-in"
     });
   }, [])
 
-
-  function handleChangeUsername(e) {
-    setUsername(e.target.value);
+  function handleChangeEmail(e) {
+    setEmail(e.target.value);
   }
 
   function handleChangePassword(e) {
@@ -24,10 +23,17 @@ React.useEffect(() => {
 
   function handleSubmit(e) {
     e.preventDefault();
-    onRegisterUser({
-      username: username,
-      password: password
-    });
+    if (!email || !password) {
+      return;
+    }
+    onRegister({
+      password: password,
+      email: email
+    })
+      .then(() => {
+        setEmail('');
+        setPassword('');
+      })
   }
 
   return (
@@ -36,13 +42,13 @@ React.useEffect(() => {
         Регистрация
       </p>
       <form onSubmit={handleSubmit} className="signup__form">
-        <input required className="signup__input" type="text" value={username} onChange={handleChangeUsername} placeholder="Email" />
+        <input required className="signup__input" type="text" value={email} onChange={handleChangeEmail} placeholder="Email" />
         <input required className="signup__input" type="password" value={password} onChange={handleChangePassword} placeholder="Пароль" />
-        <button type="submit" className="signup__button" >Войти</button>
+        <button type="submit" className="signup__button" >Зарегистрироваться</button>
       </form>
-        <p className="signup__text">Уже зарегистрированы? <Link to="/sign-in" className="signup__login-link">Войти</Link></p>
+      <p className="signup__text">Уже зарегистрированы? <Link to="/sign-in" className="signup__login-link">Войти</Link></p>
     </div>
   )
 }
 
-export default withRouter(Register);
+export default Register;
