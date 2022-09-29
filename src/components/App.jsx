@@ -20,6 +20,7 @@ import * as auth from '../utils/auth';
 
 function App() {
   const history = useHistory();
+  
   const [isEditAvatarPopupOpen, setIsEditAvatarPopupOpen] = React.useState(false);
   const [isAddPlacePopupOpen, setIsAddPlacePopupOpen] = React.useState(false);
   const [isEditProfilePopupOpen, setIsEditProfilePopupOpen] = React.useState(false);
@@ -33,6 +34,21 @@ function App() {
   const [headerLink, setHeaderLink] = React.useState({ name: "", link: "/" });
   const [headerUserEmail, setHeaderUserEmail] = React.useState("");
   const [cards, loadCards] = React.useState([]);
+  const isOpen = isEditAvatarPopupOpen || isEditProfilePopupOpen || isAddPlacePopupOpen || selectedCard
+
+  React.useEffect(() => {
+    function closeByEscape(evt) {
+      if(evt.key === 'Escape') {
+        closeAllPopups();
+      }
+    }
+    if(isOpen) {
+      document.addEventListener('keydown', closeByEscape);
+      return () => {
+        document.removeEventListener('keydown', closeByEscape);
+      }
+    }
+  }, [isOpen]) 
 
   function handleEditAvatarClick() {
     setIsEditAvatarPopupOpen(true);
@@ -138,14 +154,14 @@ function App() {
   }
 
   function closeAllPopups() {
-    setIsEditAvatarPopupOpen(false);
-    setIsAddPlacePopupOpen(false);
-    setIsEditProfilePopupOpen(false);
-    setIsDeleteCardPopupOpen(false);
-    setIsInfoTooltipPopupOpen(false);
-    setIsRegSuccess(false);
-    setCardPopupOpen({});
-    setDeletedCard({});
+    setIsEditAvatarPopupOpen(false)
+    setIsAddPlacePopupOpen(false)
+    setIsEditProfilePopupOpen(false)
+    setIsDeleteCardPopupOpen(false)
+    setIsInfoTooltipPopupOpen(false)
+    setCardPopupOpen({})
+    setDeletedCard({})
+    setIsRegSuccess(false)
   }
 
   React.useEffect(() => {
@@ -173,7 +189,6 @@ function App() {
         .then((res) => {
           if (res.data.email) {
             setIsLoggedIn(true);
-            console.log(isLoggedIn);
             setHeaderUserEmail(res.data.email);
           }
         })

@@ -25,15 +25,12 @@ function Login(props) {
     if (!email || !password) {
       return;
     }
+    setEmail('');
+    setPassword('');
     onLogin({
       password: password,
       email: email
-    })
-      .then(() => {
-        setEmail('');
-        setPassword('');
-      }
-      )
+    });
   }
 
   return (

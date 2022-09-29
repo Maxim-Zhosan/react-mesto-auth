@@ -26,14 +26,12 @@ function Register(props) {
     if (!email || !password) {
       return;
     }
+    setEmail('');
+    setPassword('');
     onRegister({
       password: password,
       email: email
-    })
-      .then(() => {
-        setEmail('');
-        setPassword('');
-      })
+    });
   }
 
   return (
